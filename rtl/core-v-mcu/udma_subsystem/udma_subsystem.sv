@@ -247,6 +247,31 @@ module udma_subsystem #(
   assign s_i2s_evt     = 1'b0;
   //assign s_uart_evt    = 1'b0;
 
+  // Keep fixed-width, inactive interfaces deterministic in configurations
+  // that instantiate fewer than the maximum number of peripherals.
+  if (N_PERIPHS < 32) begin : i_unused_event_tieoff
+    assign s_events[32*4-1:4*N_PERIPHS] = '0;
+  end
+
+  if (`N_FPGA == 0) begin : i_unused_efpga_tieoff
+    assign efpga_data_tx_valid_o = 1'b0;
+    assign efpga_data_tx_o       = '0;
+    assign efpga_data_rx_ready_o = 1'b0;
+    assign efpga_setup_o         = '0;
+  end
+
+  if (`N_I2S == 0) begin : i_unused_i2s_pad_tieoff
+    assign perio_out_o[`PERIO_I2SC0_SD1:`PERIO_I2SC0_SCK] = '0;
+    assign perio_oe_o [`PERIO_I2SC0_SD1:`PERIO_I2SC0_SCK] = '0;
+  end
+
+  // Camera pins remain reserved in the fixed peripheral-I/O map. With the
+  // camera disabled, hold their output values low and their drivers off.
+  if (`N_CAM == 0) begin : i_unused_camera_pad_tieoff
+    assign perio_out_o[`PERIO_CAM0_DATA7:`PERIO_CAM0_CLK] = '0;
+    assign perio_oe_o [`PERIO_CAM0_DATA7:`PERIO_CAM0_CLK] = '0;
+  end
+
   assign events_o      = s_events;
 
   assign L2_ro_wen_o   = 1'b1;
@@ -393,6 +418,10 @@ module udma_subsystem #(
       assign s_rx_ch_destination[CH_ID_RX_UART+g_uart] = 'h0;
       assign s_tx_ch_destination[CH_ID_TX_UART+g_uart] = 'h0;
 
+      assign perio_out_o[`PERIO_UART0_RX+`PERIO_UART_NPORTS*g_uart] = 1'b0;
+      assign perio_oe_o [`PERIO_UART0_TX+`PERIO_UART_NPORTS*g_uart] = 1'b1;
+      assign perio_oe_o [`PERIO_UART0_RX+`PERIO_UART_NPORTS*g_uart] = 1'b0;
+
       assign s_per_rst[PER_ID_UART+g_uart] = sys_resetn_i & !s_rst_periphs[PER_ID_UART+g_uart];
 
       udma_uart_top #(
@@ -467,6 +496,10 @@ module udma_subsystem #(
       assign s_rx_ch_destination[CH_ID_RX_SPIM+g_spi] = 'h0;
       assign s_tx_ch_destination[CH_ID_TX_SPIM+g_spi] = 'h0;
       assign s_tx_ch_destination[CH_ID_CMD_SPIM+g_spi] = 'h0;
+      assign perio_oe_o[
+        `PERIO_QSPIM0_CSN3+`PERIO_QSPIM_NPORTS*g_spi:
+        `PERIO_QSPIM0_CLK +`PERIO_QSPIM_NPORTS*g_spi
+      ] = '1;
       assign s_per_rst[PER_ID_SPIM+g_spi] = sys_resetn_i & !s_rst_periphs[PER_ID_SPIM+g_spi];
       udma_spim_top #(
           .L2_AWIDTH_NOAL(L2_AWIDTH_NOAL),
@@ -654,6 +687,7 @@ module udma_subsystem #(
       assign s_rx_cfg_stream_id[CH_ID_RX_SDIO+g_sdio] = 'h0;
       assign s_rx_ch_destination[CH_ID_RX_SDIO+g_sdio] = 'h0;
       assign s_tx_ch_destination[CH_ID_TX_SDIO+g_sdio] = 'h0;
+      assign perio_oe_o[`PERIO_SDIO0_CLK+`PERIO_SDIO_NPORTS*g_sdio] = 1'b1;
       assign perio_oe_o[`PERIO_SDIO0_CMD+`PERIO_SDIO_NPORTS*g_sdio] = ~s_sdcmd_oen;
 
       assign perio_oe_o[`PERIO_SDIO_NPORTS * g_sdio + `PERIO_SDIO0_DATA3 : `PERIO_SDIO_NPORTS * g_sdio + `PERIO_SDIO0_DATA0] = ~s_sddata_oen;

@@ -30,11 +30,11 @@
 `define PER_ID_HYPER     6
 `define PER_ID_SDIO      6
 `define PER_ID_CAM       7
-`define PER_ID_JTAG      8
-`define PER_ID_MRAM      8
-`define PER_ID_FILTER    8
-`define PER_ID_FPGA      9
-`define PER_ID_EXT_PER   9
+`define PER_ID_JTAG      7
+`define PER_ID_MRAM      7
+`define PER_ID_FILTER    7
+`define PER_ID_FPGA      8
+`define PER_ID_EXT_PER   8
 
 //  UDMA TX channels
 `define CH_ID_TX_UART    0
@@ -75,15 +75,14 @@
 `define CH_ID_RX_HYPER   6
 `define CH_ID_RX_HYPER0  6
 `define CH_ID_CAM        7
-`define CH_ID_CAM0       7
-`define CH_ID_RX_JTAG    8
-`define CH_ID_RX_MRAM    8
-`define CH_ID_RX_FPGA    8
-`define CH_ID_RX_EXT_PER 8
+`define CH_ID_RX_JTAG    7
+`define CH_ID_RX_MRAM    7
+`define CH_ID_RX_FPGA    7
+`define CH_ID_RX_EXT_PER 7
 
 //  Number of channels
 `define N_TX_CHANNELS  9
-`define N_RX_CHANNELS  8
+`define N_RX_CHANNELS  7
 
 //  Define indices for sysio in IO bus
 `define IOINDEX_JTAG_TCK_I            0
