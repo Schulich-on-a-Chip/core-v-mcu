@@ -44,6 +44,11 @@ filesets:
       - tests/rtl/udma_subsystem/udma_subsystem_uart_rx_tb.sv
     file_type: systemVerilogSource
 
+  tb_spim_top:
+    files:
+      - tests/rtl/udma_subsystem/udma_spim_top_tb.sv
+    file_type: systemVerilogSource
+
 targets:
   lint:
     default_tool: verilator
@@ -98,6 +103,36 @@ targets:
       - tb_uart_rx
     toplevel:
       - udma_subsystem_uart_rx_tb
+    tools:
+      verilator:
+        mode: binary
+        verilator_options:
+          - -Wno-fatal
+          - --timing
+          - --trace
+
+  lint_spim_top:
+    description: Lint the standalone uDMA SPI/QSPI master top
+    default_tool: verilator
+    filesets:
+      - rtl
+    toplevel:
+      - udma_spim_top
+    tools:
+      verilator:
+        mode: lint-only
+        verilator_options:
+          - -Wno-fatal
+          - --timing
+
+  sim_spim_top:
+    description: Exercise SPI command, TX, RX, chip-select, clock, and EOT paths
+    default_tool: verilator
+    filesets:
+      - rtl
+      - tb_spim_top
+    toplevel:
+      - udma_spim_top_tb
     tools:
       verilator:
         mode: binary
