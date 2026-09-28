@@ -131,18 +131,18 @@
 //--------------------------------------
 `define N_IO        48    // Number of IO in pad frame
 `define N_SYSIO     3     // Number of IO used for system functions like reset
-`define N_GPIO      32    // Number of IO the GPIO block can potentially control
+`define N_GPIO      16    // Number of IO the GPIO block can potentially control (shrunk from 32, design.md)
 
-`define N_APBIO     51    // number of APB based IO gpio(32)+pwm(16)+i2cs(3)
+`define N_APBIO     24    // number of APB based IO gpio(16)+pwm(8); apb_i2cs cut (design.md)
 `define NBIT_PADCFG 6     // Number of pad configuration signals
 `define NBIT_PADMUX 2     // Number of bits in the pad mux select, which means there are 2^NBIT_PADMUX possible configurations
 
 // At this time fixed by padframe
 // Please keep in same order as the generation in udma_subsystem
-`define N_UART    	2
+`define N_UART    	1
 `define N_QSPIM    	2
 `define N_SPI     	`N_QSPIM		// ToDo: Compatibility
-`define N_I2CM    	2
+`define N_I2CM    	1
 `define N_I2C     	`N_I2CM		// ToDo: Compatibility
 `define N_I2SC    	0
 `define N_I2S	      `N_I2SC		// ToDo: Cpmpatibility
@@ -152,7 +152,7 @@
 `define N_CAM     	0
 `define N_JTAG    	0
 `define N_MRAM    	0
-`define N_FILTER  	1
+`define N_FILTER  	0
 `define N_FPGA    	0
 `define N_EXT_PER   0			// ToDo: Only set to one if PULP_TRAINING -- do we still need?
 
